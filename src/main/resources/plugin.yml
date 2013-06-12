@@ -1,0 +1,8 @@
+author: Thundaklap
+database: false
+description: I would put something of merit in here but I can't be bothered.
+generator: http://dinnerbone.com/minecraft/tools/pluginator/
+main: tk.thundaklap.enchantism.Enchantism
+name: Enchantism
+startup: postworld
+version: '0.1'
