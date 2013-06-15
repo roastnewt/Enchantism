@@ -1,0 +1,132 @@
+enchantments:
+  arrow-damage:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  arrow-fire:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  arrow-infinite:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  arrow-knockback:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  damage-all:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  damage-arthropods:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  damage-undead:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  dig-speed:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  durability:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  fire-aspect:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+  
+  knockback:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  loot-bonus-blocks:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  loot-bonus-mobs:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+  
+  oxygen:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  protection-environmental:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+  
+  protection-explosions:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  protection-fall:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  protection-fire:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+  
+  protection-projectile:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  silk-touch:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+    
+  thorns:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
+  
+  water-worker:
+    level1: 1
+    level2: 2
+    level3: 3
+    level4: 4
