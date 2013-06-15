@@ -1,3 +1,5 @@
+enable-unenchant: true
+
 enchantments:
   arrow-damage:
     level1: 1
