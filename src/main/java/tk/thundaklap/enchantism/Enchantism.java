@@ -2,6 +2,7 @@ package tk.thundaklap.enchantism;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -11,6 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.EnchantingInventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Enchantism extends JavaPlugin implements Listener {
@@ -38,7 +40,7 @@ public class Enchantism extends JavaPlugin implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryOpen(InventoryOpenEvent event){
-        getLogger().info("Inventory Open Event fired.");
+        
         if(event.getInventory() instanceof EnchantingInventory){
             event.setCancelled(true);
             
@@ -55,6 +57,13 @@ public class Enchantism extends JavaPlugin implements Listener {
         
         for(EnchantInventory inv : inventories){
             if(inv.player.equals(event.getPlayer())){
+                
+                ItemStack itemToDrop = inv.getInventory().getItem(4);
+                
+                if(itemToDrop != null && itemToDrop.getType() != Material.AIR){
+                    event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), inv.getInventory().getItem(4));
+                }
+                
                 toRemove = inv;
                 break;
             }

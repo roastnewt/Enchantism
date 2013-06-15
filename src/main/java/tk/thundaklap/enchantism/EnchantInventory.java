@@ -3,6 +3,7 @@ package tk.thundaklap.enchantism;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Instrument;
@@ -24,6 +25,7 @@ public final class EnchantInventory {
    private int pageCount = 0;
    private int currentPage = 0;
    private Inventory inventory;
+   private boolean showUnenchant = false;
    
    public EnchantInventory(Player player){
        
@@ -33,10 +35,14 @@ public final class EnchantInventory {
        this.player.openInventory(inventory);
    }
    
+   public Inventory getInventory(){
+       return inventory;
+   }
+   
    public void updatePlayerInv(){
        
        boolean isMultiPage = pageCount != 0;
-       inventory.setContents(concatArray(topRows(isMultiPage && pageCount != currentPage, isMultiPage && currentPage != 0), pages[currentPage].getInventory()));
+       inventory.setContents(concatArray(topRows(isMultiPage && pageCount != currentPage, isMultiPage && currentPage != 0, showUnenchant), pages[currentPage].getInventory()));
        new DelayUpdateInventory(player).runTaskLater(Enchantism.getInstance(), 1);
        
    }
@@ -64,9 +70,11 @@ public final class EnchantInventory {
            pages = new EnchantPage[1];
            pages[0] = new EnchantPage();
            pages[0].setEmpty();
+           showUnenchant = false;
            
        }else{
        
+           
            int numberOfEnchants = applicableEnchantments.size();
            
            pageCount = (numberOfEnchants - 1) / 8;
@@ -91,6 +99,8 @@ public final class EnchantInventory {
            }
            
            pages[currentlyAddingPage].fill();
+           
+           showUnenchant = true;
            
        }
        
@@ -127,6 +137,23 @@ public final class EnchantInventory {
            
            slotChange(event.getCursor());
            return;
+       }
+       
+       if(rawSlot == 6){
+           ItemStack item = inventory.getItem(4);
+           
+           if(item != null && !item.getType().equals(Material.AIR)){
+               
+               List<Enchantment> enchantsToRemove = new ArrayList<Enchantment>();
+               
+               for(Map.Entry entry : item.getEnchantments().entrySet()){
+                   enchantsToRemove.add((Enchantment)entry.getKey());
+               }
+               
+               for(Enchantment enchant : enchantsToRemove){
+                   item.removeEnchantment(enchant);
+               }
+           }
        }
        
        if(rawSlot >= 18 && rawSlot < 54){
@@ -173,7 +200,7 @@ public final class EnchantInventory {
        
    }
    
-   private ItemStack[] topRows(boolean showNextPage, boolean showPrevPage){
+   private ItemStack[] topRows(boolean showNextPage, boolean showPrevPage, boolean showUnenchantButton){
        
        ItemStack[] is = new ItemStack[18];
        
@@ -193,6 +220,20 @@ public final class EnchantInventory {
                    
                case 4:
                    is[i] = inventory.getItem(4);
+                   break;
+                   
+               case 6:
+                   if(showUnenchantButton){
+                       is[i] = new ItemStack(Material.ENCHANTED_BOOK, 1);
+                       ItemMeta meta = is[i].getItemMeta();
+                       
+                       meta.setDisplayName(ChatColor.RED + "Remove Enchantments");
+                       
+                       is[i].setItemMeta(meta);
+                       
+                   }else{
+                       is[i] = new ItemStack(Material.WOOL, 1);
+                   }
                    break;
                
                case 8:
