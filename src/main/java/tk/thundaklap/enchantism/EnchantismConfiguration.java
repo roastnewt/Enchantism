@@ -8,46 +8,28 @@ import java.util.HashMap;
 
 public class EnchantismConfiguration {
 
-    private Map<EnchantLevel, Integer> cachedCosts = new HashMap<EnchantLevel, Integer>();
+    private Map<Enchantment, Map<Integer, Integer>> cachedCosts = new HashMap<Enchantment, Map<Integer, Integer>>();
     
-    Enchantism plugin;
     
-    public EnchantismConfiguration(Enchantism parent){
-        plugin = parent;
+    
+    public void load(){
+        for(Enchantment enchant : Enchantment.values()){
+            
+            Map<Integer, Integer> levelsForEnchant = new HashMap<Integer, Integer>();
+            
+            for(int i = 1; i <= 4; i++){
+                levelsForEnchant.put(i, Enchantism.getInstance().getConfig().getInt("enchantments." + enchant.getName().toLowerCase().replace('_', '-') + ".level" + i));
+            }
+            
+            cachedCosts.put(enchant, levelsForEnchant);
+            
+        }
+        
     }
     
     public int getCost(Enchantment enchant, int level){
         
-        //Using Integer type so we can check for null
-        Integer cost;
-        
-        if((cost = cachedCosts.get(new EnchantLevel(enchant, level))) == null){
-            try{
-                //Example: enchantments.dig-speed.level1
-                cost = plugin.getConfig().getInt("enchantments." + enchant.getName().toLowerCase().replace('_', '-') + ".level" + String.valueOf(level));
-                
-            }catch(Exception e){
-                cost = -1;
-                
-            }
-            cachedCosts.put(new EnchantLevel(enchant, level), cost);
-        }else{
-            System.out.println("Enchantment " + enchant.getName() + " was cached successfully.");
-        }
-        
-        return cost;
-        
-    }
-    
-    private class EnchantLevel{
-        
-        public Enchantment enchant;
-        public int level;
-        
-        public EnchantLevel(Enchantment enchant, int level){
-            this.enchant = enchant;
-            this.level = level;
-        }
+        return cachedCosts.get(enchant).get(level);
         
     }
     

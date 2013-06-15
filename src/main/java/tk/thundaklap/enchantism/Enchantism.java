@@ -23,11 +23,14 @@ public class Enchantism extends JavaPlugin implements Listener {
     
     public void onEnable() {
         
+        instance = this;
         saveDefaultConfig();
         
-        configuration = new EnchantismConfiguration(this);
+        configuration = new EnchantismConfiguration();
+        configuration.load();
+        
         getServer().getPluginManager().registerEvents(this, this);
-        instance = this;
+        
     }
     
     public void onDisable() {
