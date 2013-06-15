@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -53,7 +52,7 @@ public final class EnchantInventory {
        List<Enchantment> applicableEnchantments = new ArrayList<Enchantment>();
        
        //Amount check to prevent stacked books getting enchanted.
-       if(change != null && !change.getType().equals(Material.AIR) && change.getAmount() > 1){
+       if(change != null && !change.getType().equals(Material.AIR) && change.getAmount() < 1){
            
            boolean isBook = change.getType().equals(Material.BOOK);
            

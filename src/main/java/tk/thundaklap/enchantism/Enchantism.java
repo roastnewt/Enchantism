@@ -28,7 +28,6 @@ public class Enchantism extends JavaPlugin implements Listener {
         
         configuration = new EnchantismConfiguration();
         configuration.load();
-        
         getServer().getPluginManager().registerEvents(this, this);
         
     }
