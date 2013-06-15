@@ -52,7 +52,8 @@ public final class EnchantInventory {
        
        List<Enchantment> applicableEnchantments = new ArrayList<Enchantment>();
        
-       if(change != null && !change.getType().equals(Material.AIR)){
+       //Amount check to prevent stacked books getting enchanted.
+       if(change != null && !change.getType().equals(Material.AIR) && change.getAmount() > 1){
            
            boolean isBook = change.getType().equals(Material.BOOK);
            
