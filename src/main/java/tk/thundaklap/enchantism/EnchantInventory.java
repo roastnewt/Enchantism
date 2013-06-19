@@ -48,13 +48,13 @@ public final class EnchantInventory {
        
    }
    
-   public void slotChange(ItemStack change){
+   public void slotChange(ItemStack change, boolean wasRightClick){
        
        
        List<Enchantment> applicableEnchantments = new ArrayList<Enchantment>();
        
        //Amount check to prevent stacked books getting enchanted.
-       if(change != null && !change.getType().equals(Material.AIR) && change.getAmount() == 1){
+       if(change != null && !change.getType().equals(Material.AIR) && (change.getAmount() == 1 || wasRightClick)){
            
            boolean isBook = change.getType().equals(Material.BOOK);
            
@@ -137,7 +137,7 @@ public final class EnchantInventory {
        
        if(rawSlot == 4){
            
-           slotChange(event.getCursor());
+           slotChange(event.getCursor(), event.isRightClick());
            return;
        }
        
