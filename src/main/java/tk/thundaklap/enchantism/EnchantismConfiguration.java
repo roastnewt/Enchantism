@@ -10,8 +10,6 @@ public class EnchantismConfiguration {
 
     private Map<Enchantment, Map<Integer, Integer>> cachedCosts = new HashMap<Enchantment, Map<Integer, Integer>>();
     
-    
-    
     public void load(){
         for(Enchantment enchant : Enchantment.values()){
             
