@@ -1,4 +1,4 @@
-enable-unenchant: true
+enable-unenchant-button: true
 
 enchantments:
   arrow-damage:

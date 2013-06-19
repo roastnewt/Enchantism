@@ -25,9 +25,11 @@ public final class EnchantInventory {
    private int currentPage = 0;
    private Inventory inventory;
    private boolean showUnenchant = false;
+   private boolean unenchantEnabled;
    
    public EnchantInventory(Player player){
        
+       unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
        this.player = player;
        this.inventory = Bukkit.createInventory(player, 54, "Enchant");
        slotChange(null);
@@ -41,7 +43,7 @@ public final class EnchantInventory {
    public void updatePlayerInv(){
        
        boolean isMultiPage = pageCount != 0;
-       inventory.setContents(concatArray(topRows(isMultiPage && pageCount != currentPage, isMultiPage && currentPage != 0, showUnenchant), pages[currentPage].getInventory()));
+       inventory.setContents(concatArray(topRows(isMultiPage && pageCount != currentPage, isMultiPage && currentPage != 0, showUnenchant && unenchantEnabled), pages[currentPage].getInventory()));
        new DelayUpdateInventory(player).runTaskLater(Enchantism.getInstance(), 1);
        
    }
@@ -139,7 +141,7 @@ public final class EnchantInventory {
            return;
        }
        
-       if(rawSlot == 6){
+       if(showUnenchant && unenchantEnabled && rawSlot == 6){
            ItemStack item = inventory.getItem(4);
            
            if(item != null && !item.getType().equals(Material.AIR)){
@@ -191,7 +193,7 @@ public final class EnchantInventory {
            try{
                item.addUnsafeEnchantment(enchant.enchant, enchant.level);
            }catch(Exception e){
-               player.sendMessage(ChatColor.RED + "Unexpected error. See console for details.");
+               player.sendMessage(ChatColor.RED + "[Enchantism] Unexpected error. See console for details.");
                Enchantism.getInstance().getLogger().severe(e.getMessage());
            }
            inventory.setItem(4, item);

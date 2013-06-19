@@ -11,9 +11,7 @@ public class Enchantism extends JavaPlugin {
         
         instance = this;
         saveDefaultConfig();
-        
         configuration = new EnchantismConfiguration();
-        configuration.load();
         getServer().getPluginManager().registerEvents(new EnchantismListener(), this);
         
     }
