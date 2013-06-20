@@ -32,7 +32,7 @@ public final class EnchantInventory {
        unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
        this.player = player;
        this.inventory = Bukkit.createInventory(player, 54, "Enchant");
-       slotChange(null);
+       slotChange(null, false);
        this.player.openInventory(inventory);
    }
    
