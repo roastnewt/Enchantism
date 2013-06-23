@@ -60,7 +60,7 @@ public final class EnchantInventory {
 
     public void updatePlayerInv() {
         boolean isMultiPage = pageCount != 0;
-        inventory.setContents(concatArray(topRows(isMultiPage && pageCount != currentPage, isMultiPage && currentPage != 0, showUnenchant && unenchantEnabled), pages[currentPage].getInventory()));
+        inventory.setContents((ItemStack[]) ArrayUtils.addAll(topRows(isMultiPage && pageCount != currentPage, isMultiPage && currentPage != 0, showUnenchant && unenchantEnabled), pages[currentPage].getInventory()));
         new DelayUpdateInventory(player).runTask(Enchantism.getInstance());
     }
 
@@ -261,14 +261,5 @@ public final class EnchantInventory {
             }
         }
         return is;
-    }
-
-    private static <T> T[] concatArray(T[] a, T[] b) {
-        final int alen = a.length;
-        final int blen = b.length;
-        final T[] result = (T[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), alen + blen);
-        System.arraycopy(a, 0, result, 0, alen);
-        System.arraycopy(b, 0, result, alen, blen);
-        return result;
     }
 }
