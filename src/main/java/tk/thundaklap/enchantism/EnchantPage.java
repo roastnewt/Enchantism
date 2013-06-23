@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +18,8 @@ public class EnchantPage {
 
     private Map<Integer, EnchantLevelCost> levelsForSlot = new HashMap<Integer, EnchantLevelCost>();
     private static final Map<Enchantment, String> readableName = new HashMap<Enchantment, String>();
+    private static final ItemStack BLACK_WOOL;
+    private static final ItemStack UNAVAILABLE;
 
     static {
         readableName.put(Enchantment.ARROW_DAMAGE, "Power");
@@ -41,29 +44,34 @@ public class EnchantPage {
         readableName.put(Enchantment.SILK_TOUCH, "Silk Touch");
         readableName.put(Enchantment.THORNS, "Thorns");
         readableName.put(Enchantment.WATER_WORKER, "Aqua Affinity");
+
+        BLACK_WOOL = new ItemStack(Material.WOOL, 1, DyeColor.BLACK.getWoolData());
+
+        UNAVAILABLE = new ItemStack(Material.BOOK);
+        ItemMeta meta = UNAVAILABLE.getItemMeta();
+        meta.setDisplayName(ChatColor.GRAY.toString() + ChatColor.ITALIC.toString() + "Unavailable");
+        UNAVAILABLE.setItemMeta(meta);
     }
 
     public EnchantPage() {
         //Center strip
         for (int i = 4; i < 36; i += 9) {
-            inventory[i] = new ItemStack(Material.WOOL, 1, (byte) 15);
+            inventory[i] = BLACK_WOOL;
         }
     }
 
     public void setEmpty() {
         for (int i = 0; i < inventory.length; i++) {
-            inventory[i] = new ItemStack(Material.WOOL, 1, (byte) 15);
+            inventory[i] = BLACK_WOOL;
         }
     }
 
 
     public boolean addEnchantment(Enchantment enchant) {
-
         // Enchant index too high, this page is full.
         if (enchantIndex >= 36) {
             return false;
         }
-
 
         System.arraycopy(getBooksForEnchant(enchant), 0, inventory, enchantIndex, 4);
 
@@ -88,7 +96,7 @@ public class EnchantPage {
     public void fill() {
         while (enchantIndex < 36) {
             for (int i = 0; i < 4; i++) {
-                inventory[i + enchantIndex] = new ItemStack(Material.BOOK, 1);
+                inventory[i + enchantIndex] = UNAVAILABLE;
             }
 
             enchantIndex += enchantIndex % 9 == 0 ? 5 : 4;

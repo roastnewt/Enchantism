@@ -1,6 +1,8 @@
 package tk.thundaklap.enchantism;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
@@ -8,12 +10,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Event.Result;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitTask;
 
 
 public final class EnchantInventory {
@@ -26,11 +34,23 @@ public final class EnchantInventory {
     private boolean showUnenchant = false;
     private boolean unenchantEnabled;
 
+    // Slot constants
+    public static final int CURRENT_ITEM_SLOT = 4;
+    public static final int INVENTORY_SIZE = 54;
+    public static final int PREV_PAGE_SLOT = 0;
+    public static final int NEXT_PAGE_SLOT = 8;
+    public static final int UNENCHANT_SLOT = 6;
+    public static final int ENCHANTMENT_TABLE_SLOT = 13;
+    public static final int THIRD_ROW_START = 18;
+
+    // Other constants
+    public static final int ENCHANTMENTS_PER_PAGE = 8;
+
     public EnchantInventory(Player player) {
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
         this.player = player;
-        this.inventory = Bukkit.createInventory(player, 54, "Enchant");
-        slotChange(null, false);
+        this.inventory = Bukkit.createInventory(player, INVENTORY_SIZE, "Enchant an Item");
+        slotChange();
         this.player.openInventory(inventory);
     }
 
@@ -44,20 +64,9 @@ public final class EnchantInventory {
         new DelayUpdateInventory(player).runTask(Enchantism.getInstance());
     }
 
-    public void slotChange(ItemStack change, boolean wasRightClick) {
-        List<Enchantment> applicableEnchantments = new ArrayList<Enchantment>();
-
-        //Amount check to prevent stacked books getting enchanted.
-        if (change != null && !change.getType().equals(Material.AIR) && (change.getAmount() == 1 || wasRightClick)) {
-
-            boolean isBook = change.getType().equals(Material.BOOK);
-
-            for (Enchantment enchant : Enchantment.values()) {
-                if (enchant.canEnchantItem(change) || isBook) {
-                    applicableEnchantments.add(enchant);
-                }
-            }
-        }
+    public void slotChange() {
+        ItemStack change = inventory.getItem(CURRENT_ITEM_SLOT);
+        List<Enchantment> applicableEnchantments = Utils.getEnchantments(change);
 
         currentPage = 0;
 
@@ -66,11 +75,13 @@ public final class EnchantInventory {
             pages = new EnchantPage[1];
             pages[0] = new EnchantPage();
             pages[0].setEmpty();
-            showUnenchant = false;
+
+            // allow unenchanting of books
+            showUnenchant = change == null ? false : change.getType() == Material.ENCHANTED_BOOK;
 
         } else {
             int numberOfEnchants = applicableEnchantments.size();
-            pageCount = (numberOfEnchants - 1) / 8;
+            pageCount = (numberOfEnchants - 1) / ENCHANTMENTS_PER_PAGE;
             pages = new EnchantPage[pageCount + 1];
 
             for (int i = 0; i < pages.length; i++) {
@@ -94,50 +105,72 @@ public final class EnchantInventory {
 
     public void inventoryClicked(InventoryClickEvent event) {
         int rawSlot = event.getRawSlot();
+        InventoryView view = event.getView();
+        assert INVENTORY_SIZE == view.getTopInventory().getSize();
 
-        //Prevent people from shift-clicking in enchantment tables, wool, etc and losing it.
-        if ((event.isShiftClick() && rawSlot >= 54) || (rawSlot < 54 && rawSlot != 4)) {
-            event.setCancelled(true);
-        }
+        // Default to cancel, uncancel if we want vanilla behavior
+        event.setResult(Result.DENY);
 
-        if (rawSlot == 0 && currentPage != 0 && pageCount > 0) {
-            currentPage--;
-            player.playSound(player.getLocation(), Sound.CLICK, 2F, 1F);
-            updatePlayerInv();
-            return;
-        }
+        BukkitTask task = Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(CURRENT_ITEM_SLOT)));
 
-        if (rawSlot == 8 && currentPage != pageCount) {
-            currentPage++;
-            player.playSound(player.getLocation(), Sound.CLICK, 2F, 1F);
-            updatePlayerInv();
-            return;
-        }
-
-        if (rawSlot == 4) {
-            slotChange(event.getCursor(), event.isRightClick());
-            return;
-        }
-
-        if (showUnenchant && unenchantEnabled && rawSlot == 6) {
-            ItemStack item = inventory.getItem(4);
-
-            if (item != null && !item.getType().equals(Material.AIR)) {
-
-                List<Enchantment> enchantsToRemove = new ArrayList<Enchantment>();
-
-                for (Map.Entry entry : item.getEnchantments().entrySet()) {
-                    enchantsToRemove.add((Enchantment) entry.getKey());
-                }
-
-                for (Enchantment enchant : enchantsToRemove) {
-                    item.removeEnchantment(enchant);
-                }
+        // Let people shift-click in tools
+        if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
+            if (rawSlot >= INVENTORY_SIZE) {
+                // Swappy swap swap!
+                ItemStack old = view.getItem(CURRENT_ITEM_SLOT);
+                view.setItem(CURRENT_ITEM_SLOT, view.getItem(rawSlot));
+                view.setItem(rawSlot, old);
+                //slotChange();
+                //task.cancel();
+                return;
             }
         }
 
-        if (rawSlot >= 18 && rawSlot < 54) {
-            EnchantLevelCost enchant = pages[currentPage].enchantAtSlot(rawSlot - 18);
+        // Predefined slot behavior
+        if (rawSlot == PREV_PAGE_SLOT) {
+            if (currentPage != 0 && pageCount > 0) {
+                currentPage--;
+                updatePlayerInv();
+                player.playSound(player.getLocation(), Sound.CLICK, 2F, 1F);
+            }
+            return;
+
+        } else if (rawSlot == NEXT_PAGE_SLOT) {
+            if (currentPage != pageCount) {
+                currentPage++;
+                updatePlayerInv();
+                player.playSound(player.getLocation(), Sound.CLICK, 2F, 1F);
+            }
+            return;
+
+        } else if (rawSlot == CURRENT_ITEM_SLOT) {
+            event.setResult(Result.DEFAULT);
+            return;
+
+        } else if (rawSlot == UNENCHANT_SLOT) {
+            if (showUnenchant && unenchantEnabled && event.getClick() == ClickType.LEFT) {
+                ItemStack item = inventory.getItem(CURRENT_ITEM_SLOT);
+
+                if (item != null && !item.getType().equals(Material.AIR)) {
+                    if (item.getType() == Material.ENCHANTED_BOOK) {
+                        /*EnchantmentStorageMeta meta = (EnchantmentStorageMeta)item.getItemMeta();
+                        for (Map.Entry<Enchantment, Integer> entry : meta.getStoredEnchants().entrySet()) {
+                            meta.removeStoredEnchant(entry.getKey());
+                        }*/
+                        item.setType(Material.BOOK);
+                    } else {
+                        for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
+                            item.removeEnchantment(entry.getKey());
+                        }
+                    }
+                    player.playSound(player.getLocation(), Sound.GLASS, 2F, 1F);
+                    slotChange();
+                }
+            }
+            return;
+
+        } else if (rawSlot >= THIRD_ROW_START && rawSlot < INVENTORY_SIZE) {
+            EnchantLevelCost enchant = pages[currentPage].enchantAtSlot(rawSlot - THIRD_ROW_START);
 
             if (enchant == null) {
                 return;
@@ -145,13 +178,14 @@ public final class EnchantInventory {
 
             if (player.getLevel() < enchant.cost) {
                 player.sendMessage(ChatColor.RED + "You don\'t have enough XP to enchant the item with that enchantment!");
+                player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2F, 1F);
                 return;
             }
 
             player.setLevel(player.getLevel() - enchant.cost);
-            player.playSound(player.getLocation(), Sound.LEVEL_UP, 2F, 1F);
+            player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 2F, 1F);
 
-            ItemStack item = inventory.getItem(4);
+            ItemStack item = inventory.getItem(CURRENT_ITEM_SLOT);
 
             if (item.getType() == Material.BOOK) {
                 item.setType(Material.ENCHANTED_BOOK);
@@ -169,18 +203,29 @@ public final class EnchantInventory {
                 player.sendMessage(ChatColor.RED + "[Enchantism] Unexpected error. See console for details.");
                 Enchantism.getInstance().getLogger().severe(e.getMessage());
             }
-            inventory.setItem(4, item);
+            inventory.setItem(CURRENT_ITEM_SLOT, item);
+        } else if (rawSlot >= INVENTORY_SIZE) {
+            // Uncancel, unless on blacklist
+            if (event.getAction() != InventoryAction.COLLECT_TO_CURSOR && event.getAction() != InventoryAction.CLONE_STACK && event.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+                event.setResult(Result.DEFAULT);
+            }
+        }
+    }
+
+    public void inventoryDragged(InventoryDragEvent event) {
+        if (event.getRawSlots().contains(CURRENT_ITEM_SLOT)) {
+            Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(CURRENT_ITEM_SLOT)));
         }
     }
 
     private ItemStack[] topRows(boolean showNextPage, boolean showPrevPage, boolean showUnenchantButton) {
 
-        ItemStack[] is = new ItemStack[18];
+        ItemStack[] is = new ItemStack[THIRD_ROW_START];
 
         for (int i = 0; i < 18; i++) {
 
             switch (i) {
-            case 0:
+            case PREV_PAGE_SLOT:
                 if (showPrevPage) {
                     is[i] = new ItemStack(Material.WOOL, 1, (byte) 14);
                     ItemMeta woolMeta = is[i].getItemMeta();
@@ -191,13 +236,13 @@ public final class EnchantInventory {
                 }
                 break;
 
-            case 4:
-                is[i] = inventory.getItem(4);
+            case CURRENT_ITEM_SLOT:
+                is[i] = inventory.getItem(CURRENT_ITEM_SLOT);
                 break;
 
-            case 6:
+            case UNENCHANT_SLOT:
                 if (showUnenchantButton) {
-                    is[i] = new ItemStack(Material.ENCHANTED_BOOK, 1);
+                    is[i] = new ItemStack(Material.BLAZE_POWDER, 1);
                     ItemMeta meta = is[i].getItemMeta();
                     meta.setDisplayName(ChatColor.RED + "Remove Enchantments");
                     is[i].setItemMeta(meta);
@@ -206,7 +251,7 @@ public final class EnchantInventory {
                 }
                 break;
 
-            case 8:
+            case NEXT_PAGE_SLOT:
                 if (showNextPage) {
                     is[i] = new ItemStack(Material.WOOL, 1, (byte) 5);
                     ItemMeta woolMeta = is[i].getItemMeta();
@@ -217,7 +262,7 @@ public final class EnchantInventory {
                 }
                 break;
 
-            case 13:
+            case ENCHANTMENT_TABLE_SLOT:
                 is[i] = new ItemStack(Material.ENCHANTMENT_TABLE, 1);
                 break;
             default:
