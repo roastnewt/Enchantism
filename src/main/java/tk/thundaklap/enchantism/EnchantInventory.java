@@ -19,10 +19,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitTask;
 
-import static tk.thundaklap.enchantism.ItemConstants.*;
+import static tk.thundaklap.enchantism.Constants.*;
 
 public final class EnchantInventory {
 
@@ -34,22 +32,10 @@ public final class EnchantInventory {
     private boolean showUnenchant = false;
     private boolean unenchantEnabled;
 
-    // Slot constants
-    public static final int CURRENT_ITEM_SLOT = 4;
-    public static final int INVENTORY_SIZE = 54;
-    public static final int PREV_PAGE_SLOT = 0;
-    public static final int NEXT_PAGE_SLOT = 8;
-    public static final int UNENCHANT_SLOT = 6;
-    public static final int ENCHANTMENT_TABLE_SLOT = 13;
-    public static final int THIRD_ROW_START = 18;
-
-    // Other constants
-    public static final int ENCHANTMENTS_PER_PAGE = 8;
-
     public EnchantInventory(Player player) {
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
         this.player = player;
-        this.inventory = Bukkit.createInventory(player, INVENTORY_SIZE, "Enchant an Item");
+        this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant an Item");
         slotChange();
         this.player.openInventory(inventory);
     }
@@ -65,7 +51,7 @@ public final class EnchantInventory {
     }
 
     public void slotChange() {
-        ItemStack change = inventory.getItem(CURRENT_ITEM_SLOT);
+        ItemStack change = inventory.getItem(SLOT_CURRENT_ITEM);
         List<Enchantment> applicableEnchantments = Utils.getEnchantments(change);
 
         currentPage = 0;
@@ -106,19 +92,19 @@ public final class EnchantInventory {
     public void inventoryClicked(InventoryClickEvent event) {
         int rawSlot = event.getRawSlot();
         InventoryView view = event.getView();
-        assert INVENTORY_SIZE == view.getTopInventory().getSize();
+        assert SIZE_INVENTORY == view.getTopInventory().getSize();
 
         // Default to cancel, uncancel if we want vanilla behavior
         event.setResult(Result.DENY);
 
-        BukkitTask task = Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(CURRENT_ITEM_SLOT)));
+        Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(SLOT_CURRENT_ITEM)));
 
         // Let people shift-click in tools
         if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
-            if (rawSlot >= INVENTORY_SIZE) {
+            if (rawSlot >= SIZE_INVENTORY) {
                 // Swappy swap swap!
-                ItemStack old = view.getItem(CURRENT_ITEM_SLOT);
-                view.setItem(CURRENT_ITEM_SLOT, view.getItem(rawSlot));
+                ItemStack old = view.getItem(SLOT_CURRENT_ITEM);
+                view.setItem(SLOT_CURRENT_ITEM, view.getItem(rawSlot));
                 view.setItem(rawSlot, old);
                 //slotChange();
                 //task.cancel();
@@ -127,7 +113,7 @@ public final class EnchantInventory {
         }
 
         // Predefined slot behavior
-        if (rawSlot == PREV_PAGE_SLOT) {
+        if (rawSlot == SLOT_PREV_PAGE) {
             if (currentPage != 0 && pageCount > 0) {
                 currentPage--;
                 updatePlayerInv();
@@ -135,7 +121,7 @@ public final class EnchantInventory {
             }
             return;
 
-        } else if (rawSlot == NEXT_PAGE_SLOT) {
+        } else if (rawSlot == SLOT_NEXT_PAGE) {
             if (currentPage != pageCount) {
                 currentPage++;
                 updatePlayerInv();
@@ -143,13 +129,13 @@ public final class EnchantInventory {
             }
             return;
 
-        } else if (rawSlot == CURRENT_ITEM_SLOT) {
+        } else if (rawSlot == SLOT_CURRENT_ITEM) {
             event.setResult(Result.DEFAULT);
             return;
 
-        } else if (rawSlot == UNENCHANT_SLOT) {
+        } else if (rawSlot == SLOT_UNENCHANT) {
             if (showUnenchant && unenchantEnabled && event.getClick() == ClickType.LEFT) {
-                ItemStack item = inventory.getItem(CURRENT_ITEM_SLOT);
+                ItemStack item = inventory.getItem(SLOT_CURRENT_ITEM);
 
                 if (item != null && !item.getType().equals(Material.AIR)) {
                     if (item.getType() == Material.ENCHANTED_BOOK) {
@@ -169,8 +155,8 @@ public final class EnchantInventory {
             }
             return;
 
-        } else if (rawSlot >= THIRD_ROW_START && rawSlot < INVENTORY_SIZE) {
-            EnchantLevelCost enchant = pages[currentPage].enchantAtSlot(rawSlot - THIRD_ROW_START);
+        } else if (rawSlot >= SIZE_HEADER && rawSlot < SIZE_INVENTORY) {
+            EnchantLevelCost enchant = pages[currentPage].enchantAtSlot(rawSlot - SIZE_HEADER);
 
             if (enchant == null) {
                 return;
@@ -185,7 +171,7 @@ public final class EnchantInventory {
             player.setLevel(player.getLevel() - enchant.cost);
             player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 2F, 1F);
 
-            ItemStack item = inventory.getItem(CURRENT_ITEM_SLOT);
+            ItemStack item = inventory.getItem(SLOT_CURRENT_ITEM);
 
             if (item.getType() == Material.BOOK) {
                 item.setType(Material.ENCHANTED_BOOK);
@@ -203,8 +189,8 @@ public final class EnchantInventory {
                 player.sendMessage(ChatColor.RED + "[Enchantism] Unexpected error. See console for details.");
                 Enchantism.getInstance().getLogger().severe(e.getMessage());
             }
-            inventory.setItem(CURRENT_ITEM_SLOT, item);
-        } else if (rawSlot >= INVENTORY_SIZE) {
+            inventory.setItem(SLOT_CURRENT_ITEM, item);
+        } else if (rawSlot >= SIZE_INVENTORY) {
             // Uncancel, unless on blacklist
             if (event.getAction() != InventoryAction.COLLECT_TO_CURSOR && event.getAction() != InventoryAction.CLONE_STACK && event.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                 event.setResult(Result.DEFAULT);
@@ -213,52 +199,23 @@ public final class EnchantInventory {
     }
 
     public void inventoryDragged(InventoryDragEvent event) {
-        if (event.getRawSlots().contains(CURRENT_ITEM_SLOT)) {
-            Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(CURRENT_ITEM_SLOT)));
+        if (event.getRawSlots().contains(SLOT_CURRENT_ITEM)) {
+            Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(Constants.SLOT_CURRENT_ITEM)));
         }
     }
 
     private ItemStack[] topRows(boolean showNextPage, boolean showPrevPage, boolean showUnenchantButton) {
+        ItemStack[] is = Constants.getTopRowTemplate();
 
-        ItemStack[] is = new ItemStack[THIRD_ROW_START];
-
-        for (int i = 0; i < 18; i++) {
-
-            switch (i) {
-            case PREV_PAGE_SLOT:
-                if (showPrevPage) {
-                    is[i] = PREV_PAGE_ITEM;
-                } else {
-                    is[i] = WHITE_WOOL;
-                }
-                break;
-
-            case CURRENT_ITEM_SLOT:
-                is[i] = inventory.getItem(CURRENT_ITEM_SLOT);
-                break;
-
-            case UNENCHANT_SLOT:
-                if (showUnenchantButton) {
-                    is[i] = UNENCHANT_ITEM;
-                } else {
-                    is[i] = WHITE_WOOL;
-                }
-                break;
-
-            case NEXT_PAGE_SLOT:
-                if (showNextPage) {
-                    is[i] = NEXT_PAGE_ITEM;
-                } else {
-                    is[i] = WHITE_WOOL;
-                }
-                break;
-
-            case ENCHANTMENT_TABLE_SLOT:
-                is[i] = ENCH_TABLE;
-                break;
-            default:
-                is[i] = WHITE_WOOL;
-            }
+        is[SLOT_CURRENT_ITEM] = inventory.getItem(SLOT_CURRENT_ITEM);
+        if (showPrevPage) {
+            is[SLOT_PREV_PAGE] = ITEM_PREV_PAGE;
+        }
+        if (showUnenchantButton) {
+            is[SLOT_UNENCHANT] = ITEM_UNENCHANT;
+        }
+        if (showNextPage) {
+            is[SLOT_NEXT_PAGE] = ITEM_NEXT_PAGE;
         }
         return is;
     }

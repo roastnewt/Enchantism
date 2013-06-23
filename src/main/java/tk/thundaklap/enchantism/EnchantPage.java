@@ -1,19 +1,19 @@
 package tk.thundaklap.enchantism;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import static tk.thundaklap.enchantism.ItemConstants.*;
+import static tk.thundaklap.enchantism.Constants.*;
 
 public class EnchantPage {
-    private ItemStack[] inventory = new ItemStack[36];
+    private ItemStack[] inventory;
     private int enchantIndex = 0;
 
     private Map<Integer, EnchantLevelCost> levelsForSlot = new HashMap<Integer, EnchantLevelCost>();
@@ -45,19 +45,20 @@ public class EnchantPage {
     }
 
     public EnchantPage() {
-        //Center strip
-        for (int i = 4; i < 36; i += 9) {
-            inventory[i] = ItemConstants.BLACK_WOOL;
-        }
+        inventory = Constants.getPageTemplate();
     }
 
     public void setEmpty() {
-        for (int i = 0; i < inventory.length; i++) {
-            inventory[i] = ItemConstants.BLACK_WOOL;
-        }
+        inventory = Constants.INV_EMPTY_PAGE;
     }
 
-
+    /**
+     * Add the enchantment to this page. If the page is full, false will be
+     * returned.
+     *
+     * @param enchant enchantment to add
+     * @return if the enchantment was added
+     */
     public boolean addEnchantment(Enchantment enchant) {
         // Enchant index too high, this page is full.
         if (enchantIndex >= 36) {
@@ -87,7 +88,7 @@ public class EnchantPage {
     public void fill() {
         while (enchantIndex < 36) {
             for (int i = 0; i < 4; i++) {
-                inventory[i + enchantIndex] = UNAVAILABLE;
+                inventory[enchantIndex + i] = ITEM_UNAVAILABLE_ENCHANT;
             }
 
             enchantIndex += enchantIndex % 9 == 0 ? 5 : 4;
@@ -105,16 +106,16 @@ public class EnchantPage {
         }
 
         return is;
-
     }
-
 
     private static ItemStack fancyBook(EnchantLevelCost enchant, String name) {
         ItemStack is;
         int cost = enchant.cost;
 
-        if (cost > -1) {
-            is = ENCH_BOOK.clone();
+        if (cost <= -1) {
+            return ITEM_UNAVAILABLE_ENCHANT;
+        } else {
+            is = ITEM_ENCH_BOOK.clone();
 
             ItemMeta meta = is.getItemMeta();
             meta.setDisplayName(ChatColor.YELLOW + name + " " + intToRomanNumerals(enchant.level));
@@ -124,8 +125,6 @@ public class EnchantPage {
             meta.setLore(lore);
 
             is.setItemMeta(meta);
-        } else {
-            is = UNAVAILABLE;
         }
 
         return is;
