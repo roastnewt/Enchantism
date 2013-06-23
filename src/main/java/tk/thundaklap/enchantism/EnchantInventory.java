@@ -1,8 +1,5 @@
 package tk.thundaklap.enchantism;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
@@ -23,6 +20,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitTask;
 
+import static tk.thundaklap.enchantism.ItemConstants.*;
 
 public final class EnchantInventory {
 
@@ -227,12 +225,9 @@ public final class EnchantInventory {
             switch (i) {
             case PREV_PAGE_SLOT:
                 if (showPrevPage) {
-                    is[i] = new ItemStack(Material.WOOL, 1, (byte) 14);
-                    ItemMeta woolMeta = is[i].getItemMeta();
-                    woolMeta.setDisplayName(ChatColor.RED + "Previous Page");
-                    is[i].setItemMeta(woolMeta);
+                    is[i] = PREV_PAGE_ITEM;
                 } else {
-                    is[i] = new ItemStack(Material.WOOL, 1);
+                    is[i] = WHITE_WOOL;
                 }
                 break;
 
@@ -242,31 +237,25 @@ public final class EnchantInventory {
 
             case UNENCHANT_SLOT:
                 if (showUnenchantButton) {
-                    is[i] = new ItemStack(Material.BLAZE_POWDER, 1);
-                    ItemMeta meta = is[i].getItemMeta();
-                    meta.setDisplayName(ChatColor.RED + "Remove Enchantments");
-                    is[i].setItemMeta(meta);
+                    is[i] = UNENCHANT_ITEM;
                 } else {
-                    is[i] = new ItemStack(Material.WOOL, 1);
+                    is[i] = WHITE_WOOL;
                 }
                 break;
 
             case NEXT_PAGE_SLOT:
                 if (showNextPage) {
-                    is[i] = new ItemStack(Material.WOOL, 1, (byte) 5);
-                    ItemMeta woolMeta = is[i].getItemMeta();
-                    woolMeta.setDisplayName(ChatColor.GREEN + "Next Page");
-                    is[i].setItemMeta(woolMeta);
+                    is[i] = NEXT_PAGE_ITEM;
                 } else {
-                    is[i] = new ItemStack(Material.WOOL, 1);
+                    is[i] = WHITE_WOOL;
                 }
                 break;
 
             case ENCHANTMENT_TABLE_SLOT:
-                is[i] = new ItemStack(Material.ENCHANTMENT_TABLE, 1);
+                is[i] = ENCH_TABLE;
                 break;
             default:
-                is[i] = new ItemStack(Material.WOOL, 1);
+                is[i] = WHITE_WOOL;
             }
         }
         return is;

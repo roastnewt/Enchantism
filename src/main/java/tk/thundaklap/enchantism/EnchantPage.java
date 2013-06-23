@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import static tk.thundaklap.enchantism.ItemConstants.*;
 
 public class EnchantPage {
     private ItemStack[] inventory = new ItemStack[36];
@@ -18,8 +18,6 @@ public class EnchantPage {
 
     private Map<Integer, EnchantLevelCost> levelsForSlot = new HashMap<Integer, EnchantLevelCost>();
     private static final Map<Enchantment, String> readableName = new HashMap<Enchantment, String>();
-    private static final ItemStack BLACK_WOOL;
-    private static final ItemStack UNAVAILABLE;
 
     static {
         readableName.put(Enchantment.ARROW_DAMAGE, "Power");
@@ -44,25 +42,18 @@ public class EnchantPage {
         readableName.put(Enchantment.SILK_TOUCH, "Silk Touch");
         readableName.put(Enchantment.THORNS, "Thorns");
         readableName.put(Enchantment.WATER_WORKER, "Aqua Affinity");
-
-        BLACK_WOOL = new ItemStack(Material.WOOL, 1, DyeColor.BLACK.getWoolData());
-
-        UNAVAILABLE = new ItemStack(Material.BOOK);
-        ItemMeta meta = UNAVAILABLE.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY.toString() + ChatColor.ITALIC.toString() + "Unavailable");
-        UNAVAILABLE.setItemMeta(meta);
     }
 
     public EnchantPage() {
         //Center strip
         for (int i = 4; i < 36; i += 9) {
-            inventory[i] = BLACK_WOOL;
+            inventory[i] = ItemConstants.BLACK_WOOL;
         }
     }
 
     public void setEmpty() {
         for (int i = 0; i < inventory.length; i++) {
-            inventory[i] = BLACK_WOOL;
+            inventory[i] = ItemConstants.BLACK_WOOL;
         }
     }
 
@@ -105,7 +96,6 @@ public class EnchantPage {
 
 
     private static ItemStack[] getBooksForEnchant(Enchantment enchant) {
-
         ItemStack[] is = new ItemStack[4];
 
         String name = readableNameForEnchantment(enchant);
@@ -120,13 +110,11 @@ public class EnchantPage {
 
 
     private static ItemStack fancyBook(EnchantLevelCost enchant, String name) {
-
         ItemStack is;
-
         int cost = enchant.cost;
 
         if (cost > -1) {
-            is = new ItemStack(Material.ENCHANTED_BOOK, 1);
+            is = ENCH_BOOK.clone();
 
             ItemMeta meta = is.getItemMeta();
             meta.setDisplayName(ChatColor.YELLOW + name + " " + intToRomanNumerals(enchant.level));
@@ -136,23 +124,12 @@ public class EnchantPage {
             meta.setLore(lore);
 
             is.setItemMeta(meta);
-
         } else {
-
-            is = noEnchantment();
+            is = UNAVAILABLE;
         }
 
         return is;
 
-    }
-
-    private static ItemStack noEnchantment() {
-        ItemStack is = new ItemStack(Material.BOOK, 1);
-
-        ItemMeta meta = is.getItemMeta();
-        meta.setDisplayName(ChatColor.ITALIC + "" + ChatColor.GRAY + "Not applicable");
-
-        return is;
     }
 
     private static String intToRomanNumerals(int i) {
@@ -189,5 +166,4 @@ public class EnchantPage {
 
         return "Undefined";
     }
-
 }
