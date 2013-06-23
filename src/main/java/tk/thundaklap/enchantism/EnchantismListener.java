@@ -18,7 +18,7 @@ public class EnchantismListener implements Listener {
 
     private static List<EnchantInventory> inventories = new ArrayList<EnchantInventory>();
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryOpen(InventoryOpenEvent event) {
         if (event.getInventory() instanceof EnchantingInventory) {
             event.setCancelled(true);
@@ -27,7 +27,7 @@ public class EnchantismListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
         EnchantInventory toRemove = null;
 
@@ -49,7 +49,7 @@ public class EnchantismListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
         for (EnchantInventory inv : inventories) {
             if (inv.player.equals(event.getWhoClicked())) {
@@ -59,7 +59,7 @@ public class EnchantismListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryDrag(InventoryDragEvent event) {
         for (EnchantInventory inv : inventories) {
             if (inv.player.equals(event.getWhoClicked())) {
