@@ -71,7 +71,7 @@ public class EnchantPage {
             levelsForSlot.put(enchantIndex + i, new EnchantLevelCost(enchant, i + 1));
         }
 
-        enchantIndex += enchantIndex % 9 == 0 ? 5 : 4;
+        advanceEnchantIndex();
 
         return true;
 
@@ -90,11 +90,14 @@ public class EnchantPage {
             for (int i = 0; i < 4; i++) {
                 inventory[enchantIndex + i] = ITEM_UNAVAILABLE_ENCHANT;
             }
-
-            enchantIndex += enchantIndex % 9 == 0 ? 5 : 4;
+            advanceEnchantIndex();
         }
     }
 
+    private int advanceEnchantIndex() {
+        enchantIndex += enchantIndex % 9 == 0 ? 5 : 4;
+        return enchantIndex;
+    }
 
     private static ItemStack[] getBooksForEnchant(Enchantment enchant) {
         ItemStack[] is = new ItemStack[4];
