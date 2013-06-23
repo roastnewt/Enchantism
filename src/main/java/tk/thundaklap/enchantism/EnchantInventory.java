@@ -36,6 +36,7 @@ public final class EnchantInventory {
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
         this.player = player;
         this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant an Item");
+        inventory.setMaxStackSize(1);
         slotChange();
         this.player.openInventory(inventory);
     }
@@ -97,17 +98,33 @@ public final class EnchantInventory {
         // Default to cancel, uncancel if we want vanilla behavior
         event.setResult(Result.DENY);
 
-        Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(SLOT_CURRENT_ITEM)));
+        updateTask = Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(SLOT_CURRENT_ITEM)));
 
         // Let people shift-click in tools
         if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
             if (rawSlot >= SIZE_INVENTORY) {
                 // Swappy swap swap!
                 ItemStack old = view.getItem(SLOT_CURRENT_ITEM);
-                view.setItem(SLOT_CURRENT_ITEM, view.getItem(rawSlot));
-                view.setItem(rawSlot, old);
-                //slotChange();
-                //task.cancel();
+                ItemStack newI = view.getItem(rawSlot);
+                ItemStack toPlace = newI;
+                ItemStack replace = null;
+
+                // Only allow in 1 item
+                if (newI.getAmount() > 1) {
+                    replace = newI;
+                    toPlace = newI.clone();
+
+                    replace.setAmount(newI.getAmount() - 1);
+                    toPlace.setAmount(1);
+                }
+                view.setItem(SLOT_CURRENT_ITEM, toPlace);
+
+                if (replace != null) {
+                    view.setItem(rawSlot, replace);
+                    view.getBottomInventory().addItem(old);
+                } else {
+                    view.setItem(rawSlot, old);
+                }
                 return;
             }
         }
