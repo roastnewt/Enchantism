@@ -33,13 +33,13 @@ public class EnchantismListener implements Listener {
 
         for (EnchantInventory inv : inventories) {
             if (inv.player.equals(event.getPlayer())) {
-                ItemStack itemToDrop = inv.getInventory().getItem(4);
-
-                if (itemToDrop != null && itemToDrop.getType() != Material.AIR) {
-                    event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), inv.getInventory().getItem(4));
-                }
-
                 toRemove = inv;
+                inv.updateTask.cancel();
+
+                ItemStack itemToDrop = inv.getInventory().getItem(4);
+                if (itemToDrop != null && itemToDrop.getType() != Material.AIR) {
+                    event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), itemToDrop);
+                }
                 break;
             }
         }

@@ -19,12 +19,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.scheduler.BukkitTask;
 
 import static tk.thundaklap.enchantism.Constants.*;
 
 public final class EnchantInventory {
 
     public Player player;
+    public BukkitTask updateTask;
     private EnchantPage[] pages;
     private int pageCount = 0;
     private int currentPage = 0;
