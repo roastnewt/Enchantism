@@ -8,7 +8,6 @@ public class Enchantism extends JavaPlugin {
     private static Enchantism instance;
 
     public void onEnable() {
-
         instance = this;
         saveDefaultConfig();
         configuration = new EnchantismConfiguration();
@@ -23,6 +22,4 @@ public class Enchantism extends JavaPlugin {
     public static Enchantism getInstance() {
         return instance;
     }
-
-
 }
