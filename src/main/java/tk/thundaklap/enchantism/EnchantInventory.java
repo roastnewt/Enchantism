@@ -41,8 +41,7 @@ public final class EnchantInventory {
     public void updatePlayerInv() {
         boolean isMultiPage = pageCount != 0;
         inventory.setContents(concatArray(topRows(isMultiPage && pageCount != currentPage, isMultiPage && currentPage != 0, showUnenchant && unenchantEnabled), pages[currentPage].getInventory()));
-        new DelayUpdateInventory(player).runTaskLater(Enchantism.getInstance(), 1);
-
+        new DelayUpdateInventory(player).runTask(Enchantism.getInstance());
     }
 
     public void slotChange(ItemStack change, boolean wasRightClick) {
