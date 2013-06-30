@@ -37,7 +37,7 @@ public final class EnchantInventory {
     public EnchantInventory(Player player) {
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
         this.player = player;
-        this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant an Item");
+        this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant");
         inventory.setMaxStackSize(1);
         slotChange();
         this.player.openInventory(inventory);
@@ -158,10 +158,14 @@ public final class EnchantInventory {
 
                 if (item != null && !item.getType().equals(Material.AIR)) {
                     if (item.getType() == Material.ENCHANTED_BOOK) {
-                        /*EnchantmentStorageMeta meta = (EnchantmentStorageMeta)item.getItemMeta();
+                        
+                        EnchantmentStorageMeta meta = (EnchantmentStorageMeta)item.getItemMeta();
                         for (Map.Entry<Enchantment, Integer> entry : meta.getStoredEnchants().entrySet()) {
                             meta.removeStoredEnchant(entry.getKey());
-                        }*/
+                        }
+                        
+                        item.setItemMeta(meta);
+                        
                         item.setType(Material.BOOK);
                     } else {
                         for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
