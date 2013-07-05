@@ -37,7 +37,7 @@ public final class EnchantInventory {
     public EnchantInventory(Player player) {
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
         this.player = player;
-        this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant");
+        this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, ChatColor.GOLD + "Enchant");
         inventory.setMaxStackSize(1);
         slotChange();
         this.player.openInventory(inventory);
@@ -58,7 +58,8 @@ public final class EnchantInventory {
         List<Enchantment> applicableEnchantments = Utils.getEnchantments(change);
 
         currentPage = 0;
-
+        
+        
         if (applicableEnchantments.isEmpty()) {
             pageCount = 0;
             pages = new EnchantPage[1];
@@ -161,15 +162,12 @@ public final class EnchantInventory {
                         
                         EnchantmentStorageMeta meta = (EnchantmentStorageMeta)item.getItemMeta();
                         
-                        Map<Enchantment, Integer> enchants = meta.getStoredEnchants();
-                        
-                        for (Map.Entry<Enchantment, Integer> entry : enchants.entrySet()) {
+                        for (Map.Entry<Enchantment, Integer> entry : meta.getStoredEnchants().entrySet()) {
                             meta.removeStoredEnchant(entry.getKey());
                         }
-                        
                         item.setItemMeta(meta);
-                        
                         item.setType(Material.BOOK);
+                        
                     } else {
                         for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
                             item.removeEnchantment(entry.getKey());
