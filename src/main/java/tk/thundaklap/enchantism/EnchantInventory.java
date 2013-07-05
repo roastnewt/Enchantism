@@ -37,7 +37,7 @@ public final class EnchantInventory {
     public EnchantInventory(Player player) {
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
         this.player = player;
-        this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, ChatColor.GOLD + "Enchant");
+        this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant");
         inventory.setMaxStackSize(1);
         slotChange();
         this.player.openInventory(inventory);
