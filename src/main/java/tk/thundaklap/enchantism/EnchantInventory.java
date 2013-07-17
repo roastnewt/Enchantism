@@ -182,7 +182,7 @@ public final class EnchantInventory {
         } else if (rawSlot >= SIZE_HEADER && rawSlot < SIZE_INVENTORY) {
             EnchantLevelCost enchant = pages[currentPage].enchantAtSlot(rawSlot - SIZE_HEADER);
 
-            if (enchant == null) {
+            if (enchant == null || enchant.cost < 0) {
                 return;
             }
 
