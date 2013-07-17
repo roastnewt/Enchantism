@@ -165,6 +165,7 @@ public final class EnchantInventory {
                         for (Map.Entry<Enchantment, Integer> entry : meta.getStoredEnchants().entrySet()) {
                             meta.removeStoredEnchant(entry.getKey());
                         }
+                        
                         item.setItemMeta(meta);
                         item.setType(Material.BOOK);
                         
@@ -208,6 +209,9 @@ public final class EnchantInventory {
 
             if (item.getType() == Material.BOOK) {
                 item.setType(Material.ENCHANTED_BOOK);
+                
+            } 
+            if(item.getType() == Material.ENCHANTED_BOOK){
 
                 EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
                 meta.addStoredEnchant(enchant.enchant, enchant.level, true);
