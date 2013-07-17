@@ -191,11 +191,20 @@ public final class EnchantInventory {
                 player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2F, 1F);
                 return;
             }
+            
+            ItemStack item = inventory.getItem(SLOT_CURRENT_ITEM);
+            
+            for(Map.Entry itemEnchantment : item.getEnchantments().entrySet()){
+                if(enchant.enchant.conflictsWith((Enchantment)itemEnchantment.getKey())){
+                    player.sendMessage(ChatColor.RED + "That enchantment would conflict with one of the enchantments already on the tool!");
+                    player.playSound(player.getLocation(), Sound.ANVIL_BREAK, 2F, 1F);
+                    return;
+                }
+            }
 
             player.setLevel(player.getLevel() - enchant.cost);
             player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 2F, 1F);
 
-            ItemStack item = inventory.getItem(SLOT_CURRENT_ITEM);
 
             if (item.getType() == Material.BOOK) {
                 item.setType(Material.ENCHANTED_BOOK);
