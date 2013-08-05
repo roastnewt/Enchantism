@@ -109,9 +109,19 @@ public final class EnchantInventory {
 
         // Default to cancel, uncancel if we want vanilla behavior
         event.setResult(Result.DENY);
-
+        
         updateTask = Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(SLOT_CURRENT_ITEM)));
-
+        
+        // Let people drop items
+        // Raw slot check since border_left, border_right check only works sometimes
+        if(event.getClick() == ClickType.CONTROL_DROP || event.getClick() == ClickType.DROP
+                || event.getClick() == ClickType.WINDOW_BORDER_LEFT || event.getClick() == ClickType.WINDOW_BORDER_RIGHT
+                || event.getRawSlot() == WINDOW_BORDER_RAW_SLOT){
+            
+            event.setResult(Result.DEFAULT);
+            return;
+        }
+        
         // Let people shift-click in tools
         if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
             if (rawSlot >= SIZE_INVENTORY) {

@@ -26,6 +26,7 @@ public class Constants {
 
     // Other numeric constants
     public static final int ENCHANTMENTS_PER_PAGE = 8;
+    public static final int WINDOW_BORDER_RAW_SLOT = -999;
 
     /***********************************
      *  ItemStacks                     *
