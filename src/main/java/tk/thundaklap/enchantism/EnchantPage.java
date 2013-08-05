@@ -15,6 +15,7 @@ import static tk.thundaklap.enchantism.Constants.*;
 public class EnchantPage {
     private ItemStack[] inventory;
     private int enchantIndex = 0;
+    private int maxLevel;
 
     private Map<Integer, EnchantLevelCost> levelsForSlot = new HashMap<Integer, EnchantLevelCost>();
     private static final Map<Enchantment, String> readableName = new HashMap<Enchantment, String>();
@@ -44,8 +45,9 @@ public class EnchantPage {
         readableName.put(Enchantment.WATER_WORKER, "Aqua Affinity");
     }
 
-    public EnchantPage() {
+    public EnchantPage(int maxLevel) {
         inventory = Constants.getPageTemplate();
+        this.maxLevel = maxLevel;
     }
 
     public void setEmpty() {
@@ -65,9 +67,9 @@ public class EnchantPage {
             return false;
         }
 
-        System.arraycopy(getBooksForEnchant(enchant), 0, inventory, enchantIndex, 4);
+        System.arraycopy(getBooksForEnchant(enchant, maxLevel), 0, inventory, enchantIndex, 4);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < maxLevel; i++) {
             levelsForSlot.put(enchantIndex + i, new EnchantLevelCost(enchant, i + 1));
         }
 
@@ -99,13 +101,19 @@ public class EnchantPage {
         return enchantIndex;
     }
 
-    private static ItemStack[] getBooksForEnchant(Enchantment enchant) {
+    private static ItemStack[] getBooksForEnchant(Enchantment enchant, int max) {
         ItemStack[] is = new ItemStack[4];
 
         String name = readableNameForEnchantment(enchant);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < max; i++) {
             is[i] = fancyBook(new EnchantLevelCost(enchant, i + 1), name);
+            
+        }
+        
+        // Things not to enchant.
+        for(int i = max; i < 4; i++) {
+            is[i] = ITEM_UNAVAILABLE_ENCHANT;
         }
 
         return is;

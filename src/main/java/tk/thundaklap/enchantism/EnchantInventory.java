@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -30,6 +31,7 @@ public final class EnchantInventory {
     private EnchantPage[] pages;
     private int pageCount = 0;
     private int currentPage = 0;
+    private int levelToShow = 4;
     private Inventory inventory;
     private boolean showUnenchant = false;
     private boolean unenchantEnabled;
@@ -41,6 +43,13 @@ public final class EnchantInventory {
         inventory.setMaxStackSize(1);
         slotChange();
         this.player.openInventory(inventory);
+    }
+    
+    public EnchantInventory(Player player, Location tableLoc){
+       this(player);
+        
+       int numBookshelves = Utils.getApplicableBookshelves(tableLoc);
+       levelToShow = numBookshelves > 15 ? 4 : (numBookshelves / 5) + 1;
     }
 
     public Inventory getInventory() {
@@ -63,7 +72,7 @@ public final class EnchantInventory {
         if (applicableEnchantments.isEmpty()) {
             pageCount = 0;
             pages = new EnchantPage[1];
-            pages[0] = new EnchantPage();
+            pages[0] = new EnchantPage(0);
             pages[0].setEmpty();
 
             // allow unenchanting of books
@@ -73,11 +82,11 @@ public final class EnchantInventory {
             int numberOfEnchants = applicableEnchantments.size();
             pageCount = (numberOfEnchants - 1) / ENCHANTMENTS_PER_PAGE;
             pages = new EnchantPage[pageCount + 1];
-
+            
             for (int i = 0; i < pages.length; i++) {
-                pages[i] = new EnchantPage();
+                pages[i] = new EnchantPage(levelToShow);
             }
-
+            
             int currentlyAddingPage = 0;
 
             for (Enchantment enchant : applicableEnchantments) {

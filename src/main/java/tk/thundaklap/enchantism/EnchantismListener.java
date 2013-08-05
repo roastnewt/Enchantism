@@ -23,7 +23,13 @@ public class EnchantismListener implements Listener {
         if (event.getInventory() instanceof EnchantingInventory) {
             event.setCancelled(true);
 
-            inventories.add(new EnchantInventory((Player) event.getPlayer()));
+            Player thePlayer = (Player)event.getPlayer();
+            
+            if(Enchantism.getInstance().configuration.requireBookshelves){
+                inventories.add(new EnchantInventory(thePlayer, thePlayer.getTargetBlock(null, 8).getLocation()));
+            }else{
+                inventories.add(new EnchantInventory(thePlayer));
+            }
         }
     }
 
