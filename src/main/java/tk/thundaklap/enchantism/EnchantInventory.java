@@ -31,25 +31,27 @@ public final class EnchantInventory {
     private EnchantPage[] pages;
     private int pageCount = 0;
     private int currentPage = 0;
-    private int levelToShow = 4;
+    private int levelToShow;
     private Inventory inventory;
     private boolean showUnenchant = false;
     private boolean unenchantEnabled;
 
-    public EnchantInventory(Player player) {
+    
+    public EnchantInventory(Player player, Location tableLoc, boolean useBookshelves){
+        
+        if(useBookshelves){
+            int numBookshelves = Utils.getApplicableBookshelves(tableLoc);
+            levelToShow = numBookshelves > 15 ? 4 : (numBookshelves / 5) + 1;
+        }else{
+            levelToShow = 4;
+        }
+        
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
         this.player = player;
         this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant");
         inventory.setMaxStackSize(1);
         slotChange();
         this.player.openInventory(inventory);
-    }
-    
-    public EnchantInventory(Player player, Location tableLoc){
-       this(player);
-        
-       int numBookshelves = Utils.getApplicableBookshelves(tableLoc);
-       levelToShow = numBookshelves > 15 ? 4 : (numBookshelves / 5) + 1;
     }
 
     public Inventory getInventory() {
