@@ -25,7 +25,7 @@ public class EnchantismListener implements Listener {
 
             Player thePlayer = (Player)event.getPlayer();
             
-            inventories.add(new EnchantInventory(thePlayer, thePlayer.getTargetBlock(null, 8).getLocation(), Enchantism.getInstance().configuration.requireBookshelves));
+            inventories.add(new EnchantInventory(thePlayer, thePlayer.getTargetBlock(null, 500).getLocation(), Enchantism.getInstance().configuration.requireBookshelves));
 
         }
     }
