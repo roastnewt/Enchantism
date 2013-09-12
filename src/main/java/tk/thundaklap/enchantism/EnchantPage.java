@@ -50,8 +50,14 @@ public class EnchantPage {
         this.maxLevel = maxLevel;
     }
 
-    public void setEmpty() {
+    public void setEmpty(boolean showVanillaUIButton) {
+        
         inventory = Constants.INV_EMPTY_PAGE;
+        
+        if(showVanillaUIButton){
+                inventory[13] = Constants.ITEM_VANILLA_UI;
+        }
+        
     }
 
     /**

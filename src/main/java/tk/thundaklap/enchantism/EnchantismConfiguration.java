@@ -9,6 +9,7 @@ public class EnchantismConfiguration {
     private Map<Enchantment, Map<Integer, Integer>> cachedCosts = new HashMap<Enchantment, Map<Integer, Integer>>();
     public final boolean enableUnenchantButton;
     public final boolean requireBookshelves;
+    public final boolean vanillaUiAvailable;
 
     public EnchantismConfiguration() {
 
@@ -24,6 +25,7 @@ public class EnchantismConfiguration {
         
         enableUnenchantButton = config.getBoolean("enable-unenchant-button");
         requireBookshelves = config.getBoolean("require-bookshelves");
+        vanillaUiAvailable = config.getBoolean("viewable-vanilla-ui");
     }
 
     public int getCost(Enchantment enchant, int level) {

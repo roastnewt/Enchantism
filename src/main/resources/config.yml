@@ -5,6 +5,9 @@ enable-unenchant-button: true
 #Detect bookshelves and restrict enchantment levels available because of this
 require-bookshelves: true
 
+#Allow the vanilla enchantment UI to be accessible through a button in the UI?
+viewable-vanilla-ui: true
+
 #Level costs for enchantments. Names are generally logical, but default levelling is not.
 enchantments:
   arrow-damage:

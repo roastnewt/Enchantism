@@ -20,6 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import static tk.thundaklap.enchantism.Constants.*;
@@ -35,6 +36,8 @@ public final class EnchantInventory {
     private Inventory inventory;
     private boolean showUnenchant = false;
     private boolean unenchantEnabled;
+    private boolean vanillaUIEnabled;
+    private Location tableLocation;
 
     
     public EnchantInventory(Player player, Location tableLoc, boolean useBookshelves){
@@ -46,7 +49,10 @@ public final class EnchantInventory {
             levelToShow = 4;
         }
         
+        
+        tableLocation = tableLoc;
         unenchantEnabled = Enchantism.getInstance().configuration.enableUnenchantButton;
+        vanillaUIEnabled = Enchantism.getInstance().configuration.vanillaUiAvailable;
         this.player = player;
         this.inventory = Bukkit.createInventory(player, SIZE_INVENTORY, "Enchant");
         inventory.setMaxStackSize(1);
@@ -65,17 +71,18 @@ public final class EnchantInventory {
     }
 
     public void slotChange() {
+        
+        
         ItemStack change = inventory.getItem(SLOT_CURRENT_ITEM);
         List<Enchantment> applicableEnchantments = Utils.getEnchantments(change);
 
         currentPage = 0;
         
-        
         if (applicableEnchantments.isEmpty()) {
             pageCount = 0;
             pages = new EnchantPage[1];
             pages[0] = new EnchantPage(0);
-            pages[0].setEmpty();
+            pages[0].setEmpty(vanillaUIEnabled);
 
             // allow unenchanting of books
             showUnenchant = change == null ? false : change.getType() == Material.ENCHANTED_BOOK;
@@ -201,7 +208,17 @@ public final class EnchantInventory {
             }
             return;
 
-        } else if (rawSlot >= SIZE_HEADER && rawSlot < SIZE_INVENTORY) {
+        }else if(rawSlot == SLOT_VANILLA_UI){
+            
+            if(vanillaUIEnabled && event.getClick() == ClickType.LEFT){
+                player.closeInventory();
+                player.openEnchanting(tableLocation, false);
+                
+                //RIP in peace.
+                Enchantism.openInventories.remove(this);
+            }
+            
+        }else if (rawSlot >= SIZE_HEADER && rawSlot < SIZE_INVENTORY) {
             EnchantLevelCost enchant = pages[currentPage].enchantAtSlot(rawSlot - SIZE_HEADER);
 
             if (enchant == null || enchant.cost < 0) {

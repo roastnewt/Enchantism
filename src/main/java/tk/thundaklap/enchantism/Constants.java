@@ -24,6 +24,9 @@ public class Constants {
     public static final int SLOT_NEXT_PAGE = 8;
     public static final int SLOT_ENCH_TABLE = 13;
 
+    // Non-header slots
+    public static final int SLOT_VANILLA_UI = 31;
+    
     // Other numeric constants
     public static final int ENCHANTMENTS_PER_PAGE = 8;
     public static final int WINDOW_BORDER_RAW_SLOT = -999;
@@ -45,6 +48,7 @@ public class Constants {
     public static final ItemStack ITEM_PREV_PAGE;
     public static final ItemStack ITEM_NEXT_PAGE;
     public static final ItemStack ITEM_UNENCHANT;
+    public static final ItemStack ITEM_VANILLA_UI;
 
     // Arrays
     public static final ItemStack[] INV_EMPTY_PAGE = new ItemStack[36];
@@ -81,6 +85,11 @@ public class Constants {
         meta.setDisplayName(ChatColor.RED + "Remove Enchantments");
         ITEM_UNENCHANT.setItemMeta(meta);
 
+        ITEM_VANILLA_UI = new ItemStack(Material.BOOK);
+        meta = ITEM_VANILLA_UI.getItemMeta();
+        meta.setDisplayName(ChatColor.AQUA + "Show Vanilla Enchanting Window");
+        ITEM_VANILLA_UI.setItemMeta(meta);
+        
         for (int i = 0; i < Constants.SIZE_INVENTORY - Constants.SIZE_HEADER; i++) {
             INV_EMPTY_PAGE[i] = ITEM_BLACK_WOOL;
         }
