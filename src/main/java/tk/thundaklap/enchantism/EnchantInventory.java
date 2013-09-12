@@ -213,9 +213,6 @@ public final class EnchantInventory {
             if(vanillaUIEnabled && event.getClick() == ClickType.LEFT){
                 player.closeInventory();
                 player.openEnchanting(tableLocation, false);
-                
-                //RIP in peace.
-                Enchantism.openInventories.remove(this);
             }
             
         }else if (rawSlot >= SIZE_HEADER && rawSlot < SIZE_INVENTORY) {

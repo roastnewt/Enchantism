@@ -24,54 +24,35 @@ public class EnchantismListener implements Listener {
 
             Player thePlayer = event.getPlayer();
             
-            Enchantism.openInventories.add(new EnchantInventory(thePlayer, thePlayer.getTargetBlock(null, 500).getLocation(), Enchantism.getInstance().configuration.requireBookshelves));
+            Enchantism.openInventories.put(thePlayer, new EnchantInventory(thePlayer, thePlayer.getTargetBlock(null, 500).getLocation(), Enchantism.getInstance().configuration.requireBookshelves));
 
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
-        EnchantInventory toRemove = null;
-
-        Enchantism.getInstance().getLogger().info("An inventory was closed!");
-        for (EnchantInventory inv : Enchantism.openInventories) {
-            if (inv.player.equals(event.getPlayer())) {
-                toRemove = inv;
-                
-                if(inv.updateTask != null){
-                    inv.updateTask.cancel();
-                }
-
-                ItemStack itemToDrop = inv.getInventory().getItem(4);
-                if (itemToDrop != null && itemToDrop.getType() != Material.AIR) {
-                    event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), itemToDrop);
-                }
-                break;
-            }
-        }
-
-        if (toRemove != null) {
-            Enchantism.openInventories.remove(toRemove);
+        
+        if(Enchantism.openInventories.get((Player)event.getPlayer()) != null){
+            Enchantism.openInventories.remove((Player)event.getPlayer());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
-        for (EnchantInventory inv : Enchantism.openInventories) {
-            if (inv.player.equals(event.getWhoClicked())) {
-                inv.inventoryClicked(event);
-                break;
-            }
+        
+        EnchantInventory inventory;
+        
+        if((inventory = Enchantism.openInventories.get((Player)event.getWhoClicked())) != null){
+            inventory.inventoryClicked(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryDrag(InventoryDragEvent event) {
-        for (EnchantInventory inv : Enchantism.openInventories) {
-            if (inv.player.equals(event.getWhoClicked())) {
-                inv.inventoryDragged(event);
-                break;
-            }
+        EnchantInventory inventory;
+        
+        if((inventory = Enchantism.openInventories.get((Player)event.getWhoClicked())) != null){
+            inventory.inventoryDragged(event);
         }
     }
 }

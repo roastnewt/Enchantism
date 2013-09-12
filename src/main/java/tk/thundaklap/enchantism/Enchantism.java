@@ -1,18 +1,19 @@
 package tk.thundaklap.enchantism;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Enchantism extends JavaPlugin {
 
     public EnchantismConfiguration configuration;
     private static Enchantism instance;
-    static List<EnchantInventory> openInventories;
+    static Map<Player, EnchantInventory> openInventories;
 
     public void onEnable() {
         
-        openInventories = new ArrayList<EnchantInventory>();
+        openInventories = new HashMap<Player, EnchantInventory>();
         
         instance = this;
         saveDefaultConfig();
@@ -22,8 +23,11 @@ public class Enchantism extends JavaPlugin {
     }
 
     public void onDisable() {
-        for(EnchantInventory inv : openInventories){
-            inv.player.closeInventory();
+        
+        System.out.println(openInventories);
+        
+        for(Player p : openInventories.keySet()){
+            p.closeInventory();
         }
         
         openInventories.clear();
