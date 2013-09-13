@@ -24,8 +24,6 @@ public class Enchantism extends JavaPlugin {
 
     public void onDisable() {
         
-        System.out.println(openInventories);
-        
         for(Player p : openInventories.keySet()){
             p.closeInventory();
         }
