@@ -19,7 +19,8 @@ public class EnchantismListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getClickedBlock().getType() == Material.ENCHANTMENT_TABLE && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+        
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.ENCHANTMENT_TABLE) {
             event.setCancelled(true);
 
             Player thePlayer = event.getPlayer();
