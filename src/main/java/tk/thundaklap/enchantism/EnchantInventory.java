@@ -212,7 +212,6 @@ public final class EnchantInventory {
             
             if(vanillaUIEnabled && event.getClick() == ClickType.LEFT){
                 player.closeInventory();
-                dropItem();
                 player.openEnchanting(tableLocation, false);
             }
             
