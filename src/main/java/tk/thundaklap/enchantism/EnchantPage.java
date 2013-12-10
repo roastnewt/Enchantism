@@ -34,6 +34,8 @@ public class EnchantPage {
         readableName.put(Enchantment.KNOCKBACK, "Knockback");
         readableName.put(Enchantment.LOOT_BONUS_BLOCKS, "Fortune");
         readableName.put(Enchantment.LOOT_BONUS_MOBS, "Looting");
+        readableName.put(Enchantment.LUCK, "Luck of the Sea");
+        readableName.put(Enchantment.LURE, "Lure");
         readableName.put(Enchantment.OXYGEN, "Respiration");
         readableName.put(Enchantment.PROTECTION_ENVIRONMENTAL, "Protection");
         readableName.put(Enchantment.PROTECTION_EXPLOSIONS, "Blast Protection");
@@ -179,7 +181,7 @@ public class EnchantPage {
         if (readableName.containsKey(enchant)) {
             return readableName.get(enchant);
         }
-
+        
         return "Undefined";
     }
 }

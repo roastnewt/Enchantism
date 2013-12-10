@@ -87,6 +87,18 @@ enchantments:
     level2: 8
     level3: 12
     level4: 16
+    
+  luck:
+    level1: 4
+    level2: 8
+    level3: 12
+    level4: 16
+    
+  lure:
+    level1: 4
+    level2: 8
+    level3: 12
+    level4: 16
   
   oxygen:
     level1: 4
