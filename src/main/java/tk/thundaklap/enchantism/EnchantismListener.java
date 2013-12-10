@@ -33,7 +33,9 @@ public class EnchantismListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
         
-        if(Enchantism.openInventories.get((Player)event.getPlayer()) != null){
+        EnchantInventory inventory;
+        if((inventory = Enchantism.openInventories.get((Player)event.getPlayer())) != null){
+            inventory.dropItem();
             Enchantism.openInventories.remove((Player)event.getPlayer());
         }
     }

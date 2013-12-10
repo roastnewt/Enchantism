@@ -208,14 +208,15 @@ public final class EnchantInventory {
             }
             return;
 
-        }else if(rawSlot == SLOT_VANILLA_UI){
+        } else if(rawSlot == SLOT_VANILLA_UI) {
             
             if(vanillaUIEnabled && event.getClick() == ClickType.LEFT){
                 player.closeInventory();
+                dropItem();
                 player.openEnchanting(tableLocation, false);
             }
             
-        }else if (rawSlot >= SIZE_HEADER && rawSlot < SIZE_INVENTORY) {
+        } else if (rawSlot >= SIZE_HEADER && rawSlot < SIZE_INVENTORY) {
             EnchantLevelCost enchant = pages[currentPage].enchantAtSlot(rawSlot - SIZE_HEADER);
 
             if (enchant == null || enchant.cost < 0) {
@@ -274,6 +275,15 @@ public final class EnchantInventory {
         if (event.getRawSlots().contains(SLOT_CURRENT_ITEM)) {
             Bukkit.getScheduler().runTask(Enchantism.getInstance(), new SlotChangeTask(this, inventory.getItem(Constants.SLOT_CURRENT_ITEM)));
         }
+    }
+    
+    public void dropItem() {
+        
+        ItemStack currentItem = inventory.getItem(SLOT_CURRENT_ITEM);
+        if (currentItem != null && currentItem.getType() != Material.AIR) {
+            tableLocation.getWorld().dropItemNaturally(tableLocation.add(0, 0.75D, 0), currentItem);
+        }
+        
     }
 
     private ItemStack[] topRows(boolean showNextPage, boolean showPrevPage, boolean showUnenchantButton) {
