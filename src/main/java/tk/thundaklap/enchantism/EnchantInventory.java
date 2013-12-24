@@ -127,7 +127,11 @@ public final class EnchantInventory {
                 || event.getClick() == ClickType.WINDOW_BORDER_LEFT || event.getClick() == ClickType.WINDOW_BORDER_RIGHT
                 || event.getRawSlot() == WINDOW_BORDER_RAW_SLOT){
             
-            event.setResult(Result.DEFAULT);
+            // Allow an item to be dropped ONLY if it's what they put in or in
+            // their inventory.
+            if (event.getRawSlot() == 4 || event.getRawSlot() >= SIZE_INVENTORY || event.getRawSlot() == WINDOW_BORDER_RAW_SLOT) {
+                event.setResult(Result.DEFAULT);
+            }
             return;
         }
         
