@@ -6,3 +6,13 @@ main: tk.thundaklap.enchantism.Enchantism
 name: Enchantism
 startup: postworld
 version: '1.1'
+
+commands:
+  enchantism:
+    description: All enchantism commands.
+    usage: /<command> ...
+
+permissions:
+  enchantism.reload:
+    description: Allows a user to reload the config.
+    default: op

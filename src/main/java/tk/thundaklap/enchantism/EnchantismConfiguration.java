@@ -7,13 +7,22 @@ import org.bukkit.configuration.Configuration;
 
 public class EnchantismConfiguration {
     private Map<Enchantment, Map<Integer, Integer>> cachedCosts = new HashMap<Enchantment, Map<Integer, Integer>>();
-    public final boolean enableUnenchantButton;
-    public final boolean requireBookshelves;
-    public final boolean vanillaUiAvailable;
+    public boolean enableUnenchantButton;
+    public boolean requireBookshelves;
+    public boolean vanillaUiAvailable;
 
     public EnchantismConfiguration() {
+        reload();
+    }
 
+    public int getCost(Enchantment enchant, int level) {
+        return cachedCosts.get(enchant).get(level);
+    }
+
+    public void reload() {
+        Enchantism.getInstance().reloadConfig();
         Configuration config = Enchantism.getInstance().getConfig();
+
         for (Enchantment enchant : Enchantment.values()) {
             Map<Integer, Integer> levelsForEnchant = new HashMap<Integer, Integer>();
 
@@ -22,13 +31,9 @@ public class EnchantismConfiguration {
             }
             cachedCosts.put(enchant, levelsForEnchant);
         }
-        
+
         enableUnenchantButton = config.getBoolean("enable-unenchant-button");
         requireBookshelves = config.getBoolean("require-bookshelves");
         vanillaUiAvailable = config.getBoolean("viewable-vanilla-ui");
-    }
-
-    public int getCost(Enchantment enchant, int level) {
-        return cachedCosts.get(enchant).get(level);
     }
 }
