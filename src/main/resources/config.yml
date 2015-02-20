@@ -153,3 +153,9 @@ enchantments:
     level2: 8
     level3: 12
     level4: 16
+
+  depth-strider:
+    level1: 4
+    level2: 8
+    level3: 12
+    level4: -1
