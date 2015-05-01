@@ -28,6 +28,7 @@ public class EnchantPage {
         readableName.put(Enchantment.DAMAGE_ALL, "Sharpness");
         readableName.put(Enchantment.DAMAGE_ARTHROPODS, "Bane of Arthropods");
         readableName.put(Enchantment.DAMAGE_UNDEAD, "Smite");
+        readableName.put(Enchantment.DEPTH_STRIDER, "Depth Strider");
         readableName.put(Enchantment.DIG_SPEED, "Efficiency");
         readableName.put(Enchantment.DURABILITY, "Unbreaking");
         readableName.put(Enchantment.FIRE_ASPECT, "Fire Aspect");

@@ -2,6 +2,10 @@ package tk.thundaklap.enchantism;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +33,15 @@ public class Enchantism extends JavaPlugin {
         }
         
         openInventories.clear();
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(args[0].equals("reload") && sender.hasPermission("enchantism.reload")) {
+            configuration.reload();
+            sender.sendMessage(ChatColor.GOLD + "Enchantism configuration reloaded successfully.");
+        }
+        return true;
     }
 
     public static Enchantism getInstance() {
