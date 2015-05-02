@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -39,8 +40,10 @@ public class Constants {
     public static final ItemStack ITEM_ENCH_BOOK;
 
     // Just Use
-    public static final ItemStack ITEM_WHITE_WOOL;
-    public static final ItemStack ITEM_BLACK_WOOL;
+    //public static final ItemStack ITEM_WHITE_WOOL;
+    //public static final ItemStack ITEM_BLACK_WOOL;
+    public static final ItemStack ITEM_YELLOW_PANE;
+    public static final ItemStack ITEM_BLACK_PANE;
     public static final ItemStack ITEM_ENCH_TABLE;
 
     // Have Meta
@@ -58,14 +61,20 @@ public class Constants {
     static {
         ItemMeta meta;
 
-        ITEM_BOOK = new ItemStack(Material.BOOK);
-        ITEM_ENCH_BOOK = new ItemStack(Material.ENCHANTED_BOOK);
+        ITEM_BOOK = new ItemStack(Material.BOOKSHELF);
+        ITEM_ENCH_BOOK = new ItemStack(Material.BOOKSHELF);
+        meta = ITEM_ENCH_BOOK.getItemMeta();
+        meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
+        ITEM_ENCH_BOOK.setItemMeta(meta);
+        ITEM_ENCH_BOOK.removeEnchantment(Enchantment.ARROW_DAMAGE);
 
-        ITEM_WHITE_WOOL = new ItemStack(Material.WOOL, 1, DyeColor.WHITE.getWoolData());
-        ITEM_BLACK_WOOL = new ItemStack(Material.WOOL, 1, DyeColor.BLACK.getWoolData());
+        //ITEM_WHITE_WOOL = new ItemStack(Material.WOOL, 1, DyeColor.WHITE.getWoolData());
+        //ITEM_BLACK_WOOL = new ItemStack(Material.WOOL, 1, DyeColor.BLACK.getWoolData());
+        ITEM_YELLOW_PANE = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.YELLOW.getWoolData());
+        ITEM_BLACK_PANE = new ItemStack(Material.STAINED_GLASS_PANE, 1, DyeColor.BLACK.getWoolData());
         ITEM_ENCH_TABLE = new ItemStack(Material.ENCHANTMENT_TABLE);
 
-        ITEM_UNAVAILABLE_ENCHANT = new ItemStack(Material.BOOK);
+        ITEM_UNAVAILABLE_ENCHANT = new ItemStack(Material.BOOKSHELF);
         meta = ITEM_UNAVAILABLE_ENCHANT.getItemMeta();
         meta.setDisplayName(ChatColor.GRAY.toString() + ChatColor.ITALIC.toString() + "Unavailable");
         ITEM_UNAVAILABLE_ENCHANT.setItemMeta(meta);
@@ -91,16 +100,24 @@ public class Constants {
         ITEM_VANILLA_UI.setItemMeta(meta);
         
         for (int i = 0; i < Constants.SIZE_INVENTORY - Constants.SIZE_HEADER; i++) {
-            INV_EMPTY_PAGE[i] = ITEM_BLACK_WOOL;
+            if (i % 2 == 1) {
+                INV_EMPTY_PAGE[i] = ITEM_YELLOW_PANE;
+            } else {
+                INV_EMPTY_PAGE[i] = ITEM_BLACK_PANE;
+            }
         }
 
-        INV_PAGE_TEMPLATE[4] = ITEM_BLACK_WOOL;
-        INV_PAGE_TEMPLATE[4+9] = ITEM_BLACK_WOOL;
-        INV_PAGE_TEMPLATE[4+9+9] = ITEM_BLACK_WOOL;
-        INV_PAGE_TEMPLATE[4+9+9+9] = ITEM_BLACK_WOOL;
+        INV_PAGE_TEMPLATE[4] = ITEM_BLACK_PANE;
+        INV_PAGE_TEMPLATE[4+9] = ITEM_YELLOW_PANE;
+        INV_PAGE_TEMPLATE[4+9+9] = ITEM_BLACK_PANE;
+        INV_PAGE_TEMPLATE[4+9+9+9] = ITEM_YELLOW_PANE;
 
         for (int i = 0; i < SIZE_HEADER; i++) {
-            INV_TOP_ROW_TEMPLATE[i] = ITEM_WHITE_WOOL;
+            if (i % 2 == 1) {
+                INV_TOP_ROW_TEMPLATE[i] = ITEM_YELLOW_PANE;
+            } else {
+                INV_TOP_ROW_TEMPLATE[i] = ITEM_BLACK_PANE;
+            }
         }
         INV_TOP_ROW_TEMPLATE[SLOT_ENCH_TABLE] = ITEM_ENCH_TABLE;
     }
